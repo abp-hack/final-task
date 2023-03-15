@@ -91,3 +91,19 @@ class Client(models.Model):
     class Meta():
         verbose_name='Клиент'
         verbose_name_plural = 'Клиенты'
+
+class Payment(models.Model):
+    class Meta():
+        verbose_name='Оплата'
+        verbose_name_plural = 'Оплаты'
+    
+    booking = models.OneToOneField(Booking, verbose_name='Основание (бронирование)', on_delete=models.CASCADE)
+    cost = models.IntegerField()
+
+    def __str__(self) -> str:
+        return f'Подтверждение {self.booking}, на сумму {self.cost}'
+    
+    def save(self,*args, **kwargs):
+        #Здесь напиши на сохранение платежа: Подставление Дат заезда и выезда + статус номера на занят
+        super(Client, self).save(*args, **kwargs)
+    
