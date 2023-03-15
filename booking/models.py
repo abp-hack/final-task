@@ -64,3 +64,29 @@ class Booking(models.Model):
     
     def __str__(self):
         return f'{self.date_started.strftime("%m.%d.%Y")} - {self.date_end.strftime("%m.%d.%Y")}'
+
+
+class Guest(models.Model):
+    class Meta():
+        verbose_name = 'Гость'
+        verbose_name_plural = 'Гости'
+    fullName = models.CharField(max_length=150, verbose_name='ФИО')
+    tel = models.CharField(verbose_name='Телефон', max_length=11)
+
+    def __str__(self):
+        return f'Гость {self.fullName}, Тел:{self.tel}'
+
+class Client(models.Model):
+    payer = models.CharField(max_length=150, verbose_name='Плательщик')
+    
+    choices = [
+        ('Физ. лицо','Физ. лицо'),
+        ('Юр. лицо','Юр. лицо'),
+    ]
+    type_of_payer = models.CharField(max_length=50, choices=choices, verbose_name='Вид плательщика')
+
+    def __str__(self):
+        return f'Плательщик {self.type_of_payer} {self.payer}'
+    class Meta():
+        verbose_name='Клиент'
+        verbose_name_plural = 'Клиенты'
