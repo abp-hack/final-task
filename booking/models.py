@@ -10,7 +10,7 @@ class Guest(models.Model):
         verbose_name = 'Гость'
         verbose_name_plural = 'Гости'
     fullName = models.CharField(max_length=150, verbose_name='ФИО')
-    tel = models.CharField(verbose_name='Телефон', max_length=11)
+    tel = models.CharField(verbose_name='Телефон', max_length=100)
     book = models.ForeignKey('Booking', on_delete=models.CASCADE, null=True, related_name='clients')
     def __str__(self):
         return f'Гость {self.fullName}, Тел:{self.tel}'
@@ -40,18 +40,20 @@ class Booking(models.Model):
     cost = models.DecimalField('Стоимость', default=0, decimal_places=2, max_digits=32)
     payer = models.ForeignKey(Client, verbose_name='Плательщик', on_delete=models.CASCADE, null=True)
     checked = models.BooleanField('Бронь подтверждена', default=False)
+    
     class Meta:
         verbose_name = 'Бронирование'
         verbose_name_plural = 'Бронирования'
 
     def clean(self):
         if self.date_end is None and self.date_len is None:
-            raise ValidationError("Укажите конечную дату либо количество ночей")
+            raise ValidationError("Укажите конечную дату")
         if self.date_end is not None:
             self.date_len = (self.date_end - self.date_started).days
         if self.date_len:
             self.date_end = self.date_started + datetime.timedelta(days=self.date_len)
-
+        if self.date_end <= self.date_started:
+            raise ValidationError('Дата конца не может быть меньше даты начала')
         numbers = HotelNumber.objects.filter(hotel=self.hotel)
 
         bookings = Booking.objects.filter(
@@ -91,7 +93,7 @@ class Booking(models.Model):
             self.number = num
     
     def __str__(self):
-        return f'{self.date_started.strftime("%m.%d.%Y")} - {self.date_end.strftime("%m.%d.%Y")}'
+        return f'{self.date_started.strftime("%m.%d.%Y")} - {self.date_end.strftime("%m.%d.%Y")}; {"Потдвтерждено" if self.checked else "Не подтвреждено"}'
 
 
 class Payment(models.Model):
@@ -99,12 +101,12 @@ class Payment(models.Model):
         verbose_name='Оплата'
         verbose_name_plural = 'Оплаты'
     
-    booking = models.OneToOneField(Booking, verbose_name='Основание (бронирование)', on_delete=models.CASCADE)
-    cost = models.IntegerField()
+    booking = models.ForeignKey(Booking, verbose_name='Основание (бронирование)', on_delete=models.CASCADE)
+    cost = models.DecimalField(decimal_places=2, max_digits=32)
 
     def __str__(self) -> str:
         return f'Подтверждение {self.booking}, на сумму {self.cost}'
     
     def save(self,*args, **kwargs):
         #Здесь напиши на сохранение платежа: Подставление Дат заезда и выезда + статус номера на занят
-        super(Client, self).save(*args, **kwargs)
+        super(Payment, self).save(*args, **kwargs)

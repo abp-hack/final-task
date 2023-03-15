@@ -87,7 +87,7 @@ class HotelNumber(models.Model):
         verbose_name_plural = 'Номера отелей'
     
     def __str__(self):
-        return f'Номер {self.hotel}'
+        return f'Номер {self.number}'
 
     def clean(self):
         if self.date_started and not self.date_end:
