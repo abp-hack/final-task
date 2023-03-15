@@ -14,9 +14,21 @@ from admincharts.admin import AdminChartMixin
 from .models import Student, SumModel, Sums
 
 from django.contrib.admin.sites import AdminSite
-from .models import Hotel, HotelNumber, Status
+from .models import Hotel, HotelNumber, Status, Region, RoomReport, Report
 
-admin.site.register(Status)
+#admin.site.register(Status)
+admin.site.register(Region)
+
+class RoomReportTabular(admin.TabularInline):
+    model = RoomReport
+    extra = 0
+
+
+@admin.register(Report)
+class ReportAdmin(admin.ModelAdmin):
+    class Meta:
+        model = Report
+    inlines = (RoomReportTabular, )
 
 
 class HotelNumberTabular(admin.TabularInline):
@@ -24,11 +36,11 @@ class HotelNumberTabular(admin.TabularInline):
     extra = 0
 
 
-@admin.register(HotelNumber)
-class HotelNumberAdmin(admin.ModelAdmin):
-    class Meta:
-        model = HotelNumber
-    list_display = ('hotel', 'number', 'level', 'status')
+# @admin.register(HotelNumber)
+# class HotelNumberAdmin(admin.ModelAdmin):
+#     class Meta:
+#         model = HotelNumber
+#     list_display = ('hotel', 'number', 'status')
 
 
 @admin.register(Hotel)
@@ -36,6 +48,9 @@ class HotelAdmin(admin.ModelAdmin):
     inlines = (HotelNumberTabular, )
     class Meta:
         model = Hotel
+    
+    class Media:
+        js = ['dates_display.js']
 
 # another_site = AdminSite(name='another_admin')
 
