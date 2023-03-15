@@ -7,6 +7,10 @@ from dynamic_admin_forms.admin import DynamicModelAdminMixin
 from dynamic_admin_forms.admin import DynamicModelAdminMixin
 from application.models import HotelNumber
 
+class GuestTabular(admin.TabularInline):
+    model = Guest
+    extra = 0
+
 
 @admin.register(Guest)
 class GuestAdmin(DynamicModelAdminMixin, admin.ModelAdmin):
@@ -26,8 +30,9 @@ admin.site.register(Client)
 class BookingAdmin(DynamicModelAdminMixin, admin.ModelAdmin):
     class Meta:
         model = Booking
-    fields = ('date_started', 'date_end', 'date_len', 'hotel', 'number', 'cost')
+    fields = ('date_started', 'date_end', 'hotel', 'number', 'cost', 'payer')
     dynamic_fields = ('number', )
+    inlines = (GuestTabular, )
 
     def get_dynamic_number_field(self, data):
         q = HotelNumber.objects.all()

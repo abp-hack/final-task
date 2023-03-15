@@ -5,6 +5,31 @@ from django.core.exceptions import ValidationError
 import datetime
 
 
+class Guest(models.Model):
+    class Meta():
+        verbose_name = 'Гость'
+        verbose_name_plural = 'Гости'
+    fullName = models.CharField(max_length=150, verbose_name='ФИО')
+    tel = models.CharField(verbose_name='Телефон', max_length=11)
+    book = models.ForeignKey('Booking', on_delete=models.CASCADE, null=True, related_name='clients')
+    def __str__(self):
+        return f'Гость {self.fullName}, Тел:{self.tel}'
+
+class Client(models.Model):
+    payer = models.CharField(max_length=150, verbose_name='Плательщик')
+    choices = [
+        ('Физ. лицо','Физ. лицо'),
+        ('Юр. лицо','Юр. лицо'),
+    ]
+    type_of_payer = models.CharField(max_length=50, choices=choices, verbose_name='Вид плательщика')
+
+    def __str__(self):
+        return f'Плательщик {self.type_of_payer} {self.payer}'
+    class Meta():
+        verbose_name='Плательщик'
+        verbose_name_plural = 'Плательщики'
+
+
 class Booking(models.Model):
     date_started = models.DateField('Дата начала', null=True, blank=True)
     date_end = models.DateField('Дата окончания', null=True, blank=True)
@@ -13,6 +38,8 @@ class Booking(models.Model):
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, verbose_name='Отель', null=True)
     date = models.DateField(auto_now_add=True, null=True, verbose_name='Дата заезда')
     cost = models.DecimalField('Стоимость', default=0, decimal_places=2, max_digits=32)
+    payer = models.ForeignKey(Client, verbose_name='Плательщик', on_delete=models.CASCADE, null=True)
+    checked = models.BooleanField('Бронь подтверждена', default=False)
     class Meta:
         verbose_name = 'Бронирование'
         verbose_name_plural = 'Бронирования'
@@ -67,27 +94,3 @@ class Booking(models.Model):
         return f'{self.date_started.strftime("%m.%d.%Y")} - {self.date_end.strftime("%m.%d.%Y")}'
 
 
-class Guest(models.Model):
-    class Meta():
-        verbose_name = 'Гость'
-        verbose_name_plural = 'Гости'
-    fullName = models.CharField(max_length=150, verbose_name='ФИО')
-    tel = models.CharField(verbose_name='Телефон', max_length=11)
-
-    def __str__(self):
-        return f'Гость {self.fullName}, Тел:{self.tel}'
-
-class Client(models.Model):
-    payer = models.CharField(max_length=150, verbose_name='Плательщик')
-    
-    choices = [
-        ('Физ. лицо','Физ. лицо'),
-        ('Юр. лицо','Юр. лицо'),
-    ]
-    type_of_payer = models.CharField(max_length=50, choices=choices, verbose_name='Вид плательщика')
-
-    def __str__(self):
-        return f'Плательщик {self.type_of_payer} {self.payer}'
-    class Meta():
-        verbose_name='Клиент'
-        verbose_name_plural = 'Клиенты'
