@@ -107,6 +107,6 @@ class Payment(models.Model):
     def __str__(self) -> str:
         return f'Подтверждение {self.booking}, на сумму {self.cost}'
     
-    def save(self,*args, **kwargs):
+    def save(self, *args, **kwargs):
         #Здесь напиши на сохранение платежа: Подставление Дат заезда и выезда + статус номера на занят
         super(Payment, self).save(*args, **kwargs)

@@ -35,3 +35,21 @@ class CheckOut(models.Model): #заселение только по предва
         self.checkin.booking.number.status = Status.objects.filter(text='Требует уборки')[0]
         self.checkin.booking.number.save()
         super(CheckOut, self).save(*args, **kwargs)
+
+
+class TodayNumbers(Booking):
+    class Meta:
+        proxy = True
+        verbose_name = 'Номера для заезда сегодня'
+        verbose_name_plural = 'Номера для заезда сегодня'
+
+class TodayLogoutNumbers(Booking):
+    class Meta:
+        proxy = True
+        verbose_name = 'Номера для выезда сегодня'
+        verbose_name_plural = 'Номера для выезда сегодня'
+
+class EmptyModel(models.Model):
+    class Meta:
+        verbose_name = 'Рабочий стол'
+        verbose_name_plural = 'Рабочий стол'
