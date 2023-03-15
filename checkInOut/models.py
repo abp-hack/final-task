@@ -2,6 +2,22 @@ from django.db import models
 from application.models import HotelNumber, Status, Hotel
 # Create your models here.
 
+class CheckinWithoutBooking(models.Model):
+    class Meta():
+        verbose_name='Заезд без бронирования'
+        verbose_name_plural='Заезды без бронирования'
+    
+    date_start = models.DateField('Дата заезда')
+    date_end = models.DateField('Дата выезда')
+
+    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, verbose_name='Отель', null=True)
+    number = models.ForeignKey(HotelNumber,on_delete=models.CASCADE, verbose_name='Номер в отеле (комната)', blank=True, null=True)
+    payer = models.ForeignKey('booking.Client', verbose_name='Плательщик',on_delete=models.CASCADE, null=True)
+    cost = models.DecimalField('Стоимость', default=0, decimal_places=2, max_digits=32)
+    guest = models.ForeignKey('booking.Guest', on_delete=models.CASCADE, verbose_name='Гость')
+
+    def __str__(self) -> str:
+        return f'Заезд без бронирования {self.date_start}'
 
 
 class CheckIn(models.Model): #заселение только по предварительному бронированию
@@ -47,7 +63,7 @@ class CheckOut(models.Model): #заселение только по предва
         hotel_number.save()
         super(CheckOut, self).save(*args, **kwargs)
 
-        
+
 class CheckGuest(models.Model):
     class Meta():
         verbose_name='Заезжающий гость'

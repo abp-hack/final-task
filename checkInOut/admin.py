@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CheckIn, CheckOut, CheckGuest
+from .models import CheckIn, CheckOut, CheckGuest, CheckinWithoutBooking
 from application.models import HotelNumber, Status
 
 from booking.models import Client, Guest, Payment
@@ -47,3 +47,6 @@ class CheckOutAdmin(DynamicModelAdminMixin, admin.ModelAdmin):
         if 'hotel' in data.keys():
             q = q.filter(hotel=data['hotel'])
         return q, data['number'], False
+
+
+admin.site.register(CheckinWithoutBooking)
