@@ -11,7 +11,8 @@ class Booking(models.Model):
     date_len = models.PositiveIntegerField('Сколько ночей', blank=True, null=True)
     number = models.ForeignKey(HotelNumber, verbose_name='Номер отеля', on_delete=models.CASCADE, blank=True, null=True)
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, verbose_name='Отель', null=True)
-
+    date = models.DateField(auto_now_add=True, null=True, verbose_name='Дата заезда')
+    cost = models.DecimalField('Стоимость', default=0, decimal_places=2, max_digits=32)
     class Meta:
         verbose_name = 'Бронирование'
         verbose_name_plural = 'Бронирования'
