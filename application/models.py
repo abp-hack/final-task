@@ -87,7 +87,15 @@ class HotelNumber(models.Model):
         verbose_name_plural = 'Номера отелей'
     
     def __str__(self):
-        return f'Номер {self.number}'
+        from booking.models import Booking
+        suf = ''
+        if self.status.text == 'Занят':
+            print(self.date_started)
+            if self.date_started and self.date_end:
+                suf += f'{self.date_started.strftime("%m.%d.%Y")}-{self.date_end.strftime("%m.%d.%Y")}'
+                # book = Booking.objects.filter(number=self).first().payer
+                # suf += book.payer
+        return f'Номер {self.number}; {suf}'
 
     def clean(self):
         if self.date_started and not self.date_end:

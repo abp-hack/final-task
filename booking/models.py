@@ -4,7 +4,6 @@ from django.db.models import Q
 from django.core.exceptions import ValidationError
 import datetime
 
-
 class Guest(models.Model):
     class Meta():
         verbose_name = 'Гость'
@@ -12,6 +11,8 @@ class Guest(models.Model):
     fullName = models.CharField(max_length=150, verbose_name='ФИО')
     tel = models.CharField(verbose_name='Телефон', max_length=100)
     book = models.ForeignKey('Booking', on_delete=models.CASCADE, null=True, related_name='clients')
+   
+
     def __str__(self):
         return f'Гость {self.fullName}, Тел:{self.tel}'
 
